@@ -1,4 +1,4 @@
-export const characters = {
+export const characters: Record<string, string> = {
     "steve": "Steve",
     "sonic": "Sonic",
     "mr_game_and_watch": "Mr. Game & Watch",

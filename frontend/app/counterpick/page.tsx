@@ -3,34 +3,58 @@
 import Message from "@/app/ui/message";
 import FighterList from "@/app/ui/fighter-list";
 import { use, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { useQuery, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-export default function Page({
-	searchParams,
-}: {
-	searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-}) {
-	const {name, ...params} = use(searchParams);
-	const request = fetch(`http://localhost:8000/${name}/?` + new URLSearchParams(params))
-          .then(res => res.json())
-          .catch(err => console.error("Unable to retrieve data:", err));
+const queryClient = new QueryClient();
 
-    return (
-        <Suspense fallback={<div>Loading...</div>}>
-			<Counterpicks name={name} result={request} />
+export default function Page() {
+	return (
+		<Suspense fallback={<span>Loading...</span>}>
+			<QueryClientProvider client={queryClient}>
+				<Counterpicks />
+			</QueryClientProvider>
 		</Suspense>
 	);
 }
 
-function Counterpicks({ name, result }) {
-	const res = use(result);
+function Counterpicks() {
+	const sp = useSearchParams();
+    const name = sp.get("name") ?? "steve";
+    const params = {
+        "mthr": sp.get("mthr") ?? "-0.5",
+        "ctol": sp.get("ctol") ?? "-0.5",
+        "weighted": sp.get("weighted") ?? "1",
+    };
 
-	return (
+    const { status, data, error } = useQuery({
+        queryKey: ["counterpicks", name, params],
+        queryFn: async () => {
+            const response = await fetch(`/api/${name}/?` + new URLSearchParams(params));
+            if (!response.ok) {
+                throw new Error("Unable to retrieve counterpicks from api.");
+            }
+            return response.json();
+        },
+    });
+
+    if (status === "pending") {
+        return <span>Loading...</span>;
+    }
+
+    if (status === "error") {
+        return <span>Error: {error.message}</span>
+    }
+
+    return (
 		<>
-			{res.msg ?
-			 <Message info={res} />
+            <Link href="/">Go back</Link>
+			{data.msg ?
+			 <Message info={data} />
 			 :
-			 <FighterList name={name} res={res} />
+			 <FighterList name={name} res={data} />
 			}
 		</>
-	);
+    );
 }

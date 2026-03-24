@@ -15,14 +15,14 @@ export default function FighterList({
 					<div key={`div:${idx}`}>
 						<li key={fighter}>{getNameFromApi(fighter)}</li>
 						<ul>{Object.entries(counterpicks).map(([ n, v ]) =>
-							<li key={`${fighter}:${n}`}>{parseName(n)}: {v}</li>
+							<li key={`${fighter}:${n}`}>{parseName(n)}: {(+v).toFixed(1)}</li>
 						)}
 						</ul>
 					</div>
 				)})}
 				<li key={`name:${name}`}>For comparison: {getNameFromApi(name)}</li>
 				<ul>{Object.entries(res[name]).map(([ n, v ]) =>
-					<li key={`${name}:${n}`}>{parseName(n)}: {v}</li>
+					<li key={`${name}:${n}`}>{parseName(n)}: {(+v).toFixed(1)}</li>
 				)}
 				</ul>
 				{Object.keys(res.warnings).length !== 0 ?
