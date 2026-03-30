@@ -30,6 +30,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Run Linter
+    - name: Install and Run Linter
       run: |
+        pipx install ruff
         ruff check --output-format=github
