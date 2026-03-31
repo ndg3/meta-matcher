@@ -15,10 +15,10 @@ RUN npm run build
 FROM nginxinc/nginx-unprivileged:alpine3.23 AS runner
 
 # Dev
-COPY nginx.dev.conf /etc/nginx/nginx.conf
+#COPY nginx.dev.conf /etc/nginx/nginx.conf
 
 # Prod
-#COPY nginx.prod.conf /etc/nginx/nginx.conf
+COPY nginx.prod.conf /etc/nginx/nginx.conf
 
 COPY --chown=nginx:nginx --from=builder /app/out /usr/share/nginx/html
 
