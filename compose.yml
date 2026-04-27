@@ -10,7 +10,10 @@ services:
       DJANGO_ALLOWED_HOSTS: "*"
       DJANGO_CSRF_TRUSTED_ORIGINS: "http://localhost:8080,http://0.0.0.0:8080,http://127.0.0.1:8080"
   frontend:
-    build: frontend/
+    build:
+      context: frontend/
+      args:
+        - SERVER
     container_name: frontend
     ports:
       - "8080:8080"

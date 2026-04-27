@@ -14,11 +14,11 @@ RUN npm run build
 # STAGE 2: Production build
 FROM nginxinc/nginx-unprivileged:alpine3.23 AS runner
 
-# Dev
-#COPY nginx.dev.conf /etc/nginx/nginx.conf
+COPY nginx.conf.in /etc/nginx/nginx.conf.in
 
-# Prod
-COPY nginx.prod.conf /etc/nginx/nginx.conf
+ARG SERVER=localhost
+
+RUN ["/bin/sh", "-c", "envsubst '$SERVER' < /etc/nginx/nginx.conf.in > /etc/nginx/nginx.conf"]
 
 COPY --chown=nginx:nginx --from=builder /app/out /usr/share/nginx/html
 
